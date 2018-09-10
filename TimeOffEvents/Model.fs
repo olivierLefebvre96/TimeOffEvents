@@ -50,13 +50,8 @@ module Logic =
             | NotCreated -> invalidOp "Not created"
             | PendingValidation request
             | Validated request -> request
-        member this.IsActive =
-            match this with
-            | NotCreated -> false
-            | PendingValidation _
-            | Validated _ -> true
 
-    let evolve _ event =
+    let evolve state event =
         match event with
         | RequestCreated request -> PendingValidation request
         | RequestValidated request -> Validated request
@@ -64,24 +59,10 @@ module Logic =
     let getRequestState events =
         events |> Seq.fold evolve NotCreated
 
-    let getAllRequests events =
-        let folder requests (event: RequestEvent) =
-            let state = defaultArg (Map.tryFind event.Request.RequestId requests) NotCreated
-            let newState = evolve state event
-            requests.Add (event.Request.RequestId, newState)
+    let getAllRequests events = Map.empty
 
-        events |> Seq.fold folder Map.empty
-
-    let overlapWithAnyRequest (otherRequests: TimeOffRequest seq) request =
-        false //TODO
-
-    let createRequest activeUserRequests  request =
-        if overlapWithAnyRequest activeUserRequests  request then
-            Error "Overlapping request"
-        elif request.Start.Date <= DateTime.Today then
-            Error "The request starts in the past"
-        else
-            Ok [RequestCreated request]
+    let createRequest request =
+        Ok [RequestCreated request]
 
     let validateRequest requestState =
         match requestState with
@@ -98,14 +79,7 @@ module Logic =
 
         match command with
         | RequestTimeOff request ->
-            let activeUserRequests  =
-                userRequests
-                |> Map.toSeq
-                |> Seq.map (fun (_, state) -> state)
-                |> Seq.where (fun state -> state.IsActive)
-                |> Seq.map (fun state -> state.Request)
-
-            createRequest activeUserRequests  request
+            createRequest request
 
         | ValidateRequest (_, requestId) ->
             let requestState = defaultArg (userRequests.TryFind requestId) NotCreated

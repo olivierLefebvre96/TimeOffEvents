@@ -72,11 +72,11 @@ module Logic =
 
         events |> Seq.fold folder Map.empty
 
-    let overlapWithAnyRequest (previousRequests: TimeOffRequest seq) request =
+    let overlapWithAnyRequest (otherRequests: TimeOffRequest seq) request =
         false //TODO
 
-    let createRequest previousRequests request =
-        if overlapWithAnyRequest previousRequests request then
+    let createRequest activeUserRequests  request =
+        if overlapWithAnyRequest activeUserRequests  request then
             Error "Overlapping request"
         elif request.Start.Date <= DateTime.Today then
             Error "The request starts in the past"
@@ -98,14 +98,14 @@ module Logic =
 
         match command with
         | RequestTimeOff request ->
-            let activeRequests =
+            let activeUserRequests  =
                 userRequests
                 |> Map.toSeq
                 |> Seq.map (fun (_, state) -> state)
                 |> Seq.where (fun state -> state.IsActive)
                 |> Seq.map (fun state -> state.Request)
 
-            createRequest activeRequests request
+            createRequest activeUserRequests  request
 
         | ValidateRequest (_, requestId) ->
             let requestState = defaultArg (userRequests.TryFind requestId) NotCreated

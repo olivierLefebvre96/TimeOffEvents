@@ -10,7 +10,7 @@
     <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Expecto" Version="8.*" />
-    <PackageReference Include="FSharp.Core" Version="4.*" />
+    <PackageReference Include="Expecto" Version="8.4.2" />
+    <PackageReference Include="FSharp.Core" Version="4.5.2" />
   </ItemGroup>
 </Project>

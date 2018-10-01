@@ -14,6 +14,7 @@ let Then expected message (events: RequestEvent list, command) =
     Expect.equal result expected message
 
 open System
+open TimeOff.Logic
 
 let creationTests =
   testList "Creation tests" [
@@ -41,7 +42,7 @@ let validationTests =
 
       Given [ RequestCreated request ]
       |> When (ValidateRequest (1, Guid.Empty))
-      |> Then (Ok [RequestValidated request]) "The request has been validated"
+      |> Then (Error "Request cannot be validated") "Request cannot be validated"
     }
   ]
 

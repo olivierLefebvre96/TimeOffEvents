@@ -1,6 +1,7 @@
 module TimeOff.TestsRunner
 
 open Expecto
+open System
 
 [<EntryPoint>]
 let main args =

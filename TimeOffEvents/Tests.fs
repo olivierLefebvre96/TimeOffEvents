@@ -33,7 +33,7 @@ let creationTests =
 
 let validationTests =
   testList "Validation tests" [
-    test "A request is validated" {
+    test "A request is not validated" {
       let request = {
         UserId = 1
         RequestId = Guid.Empty
